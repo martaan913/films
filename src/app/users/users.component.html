@@ -1,0 +1,10 @@
+<ul>
+  <li *ngFor="let user of users">{{user.name}}, {{user.email}}</li>
+</ul>
+
+<ul>
+  @for(user of users; track user) {
+    <li (click)="selectUser(user)">{{user}}</li>
+  }
+</ul>
+<p *ngIf="selectedUser">Selected user: {{selectedUser.name}}</p>
