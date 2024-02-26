@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../entities/user';
 import { UsersService } from '../../services/users.service';
-import {MatTableModule} from '@angular/material/table';
+import { MaterialModule } from '../../modules/material.module';
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, MatTableModule],
+  imports: [CommonModule, MaterialModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
@@ -15,7 +15,7 @@ export class UsersComponent implements OnInit {
                 new User('Julka', 'julka@upjs.sk', 3, undefined, 'heslo'),
                 {name:"Ferko", email:'ferko@gmail.com', password:''}];
   selectedUser?: User;
-  errorMessage = '';
+  // errorMessage = '';
   columnsToDisplay = ['id','name','email'];
 
   constructor(private usersService: UsersService){}
@@ -25,7 +25,7 @@ export class UsersComponent implements OnInit {
     this.usersService.getUsers().subscribe({
       next: u => this.users = u,
       error: error => {
-        this.errorMessage = "Chyba komunikácie so serverom";
+        // this.errorMessage = "Chyba komunikácie so serverom";
         console.error("chyba:", error);
       }
     });
