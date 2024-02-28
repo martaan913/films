@@ -3,10 +3,14 @@
     <mat-icon>menu</mat-icon>
   </button>
   <span>Films app</span>
-  <a mat-flat-button color="primary" href="/users"><mat-icon>group</mat-icon>users</a>
-  <a mat-flat-button color="primary" href="/extended-users"><mat-icon>group</mat-icon>Extended users</a>
+  <button mat-flat-button color="primary" routerLink="/users" routerLinkActive="active"><mat-icon>group</mat-icon>users</button>
+  <button mat-flat-button color="primary" routerLink="/extended-users" routerLinkActive="active"><mat-icon>group</mat-icon>Extended users</button>
 
   <span class="spacer"></span>
-  
-  <a mat-flat-button color="primary" href="/login"><mat-icon>login</mat-icon>login</a>
+  @if(userNameSignal()) {
+    <span>{{userNameSignal()}}</span>
+    <button mat-flat-button color="primary" (click)="logout()"><mat-icon>logout</mat-icon>logout</button>
+  } @else {
+    <button mat-flat-button color="primary" routerLink="/login" routerLinkActive="active"><mat-icon>login</mat-icon>login</button>
+  }
 </mat-toolbar>

@@ -13,7 +13,7 @@ import { MaterialModule } from '../../modules/material.module';
 export class UsersComponent implements OnInit {
   users:User[]=[new User('Hanka','hanka@upjs.sk', 2, new Date(),'qwerty'),
                 new User('Julka', 'julka@upjs.sk', 3, undefined, 'heslo'),
-                {name:"Ferko", email:'ferko@gmail.com', password:''}];
+                {name:"Ferko", email:'ferko@gmail.com', password:'', groups:[]}];
   selectedUser?: User;
   // errorMessage = '';
   columnsToDisplay = ['id','name','email'];
