@@ -11,6 +11,7 @@
     <span>{{userNameSignal()}}</span>
     <button mat-flat-button color="primary" (click)="logout()"><mat-icon>logout</mat-icon>logout</button>
   } @else {
+    <button mat-flat-button color="primary" routerLink="/register" routerLinkActive="active"><mat-icon>person_add</mat-icon>register</button>
     <button mat-flat-button color="primary" routerLink="/login" routerLinkActive="active"><mat-icon>login</mat-icon>login</button>
   }
 </mat-toolbar>

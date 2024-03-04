@@ -26,4 +26,8 @@ export class LoginComponent {
       }
     });
   }
+
+  printError(err: any) {
+    return JSON.stringify(err);
+  }
 }
