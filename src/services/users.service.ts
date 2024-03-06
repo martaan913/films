@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { User } from '../entities/user';
-import { EMPTY, Observable, catchError, map, of, throwError } from 'rxjs';
+import { EMPTY, Observable, catchError, map, of, tap, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Auth } from '../entities/auth';
 import { MessageService } from './message.service';
@@ -63,6 +63,32 @@ export class UsersService {
       map(jsonUsers => jsonUsers.map(jsonUser => User.clone(jsonUser))),
       catchError(err => this.processError(err))
     );
+  }
+
+  userConflicts(user: User): Observable<string[]> {
+    return this.http.post<string[]>(this.url + 'user-conflicts', user).pipe(
+      catchError(err => this.processError(err))
+    );
+  }
+
+  register(user: User): Observable<User> {
+    return this.http.post<User>(this.url + 'register', user).pipe(
+      tap(user => {
+        this.messageService.success("Registration was successful, please log in.");
+        this.router.navigateByUrl("/login");
+      }),
+      catchError(err => this.processError(err))
+    );
+  }
+
+  deleteUser(id: number): Observable<boolean> {
+    return this.http.delete(this.url + 'user/' + id + '/' + this.token).pipe(
+      map(() => {
+        this.messageService.success("User deleted");
+        return true;
+      }),
+      catchError(err => this.processError(err))
+    )
   }
 
   login(auth: Auth): Observable<boolean> {
