@@ -5,11 +5,6 @@
     Insert new user
   }
 </h2>
-@if(userId) {
-  <a routerLink="../{{userId-1}}" mat-raised-button color="primary">previous</a>
-  <a routerLink="../{{userId+1}}" mat-raised-button color="primary">next</a>
-}
-
 <form (ngSubmit)="submit()" [formGroup]="editForm">
   <mat-card class="login_card">
     <mat-card-header>
@@ -56,11 +51,21 @@
       </mat-form-field>
 
       <mat-slide-toggle formControlName="active">Active</mat-slide-toggle>
-
+      <p>Member of groups:</p>
+      <div formArrayName="groups">
+      @for(group of groups.controls; track i; let i = $index) {
+        <mat-checkbox [formControlName]="i">{{allGroups[i].name}}</mat-checkbox>
+      }
+      </div>
 
     </mat-card-content>
     <mat-card-actions>
-      <button mat-button type="submit" [disabled]="editForm.invalid">Register</button>
+      <button mat-button type="submit" [disabled]="editForm.invalid">Save</button>
     </mat-card-actions>
   </mat-card>
 </form>
+
+@if(userId) {
+  <a routerLink="../{{userId-1}}" mat-raised-button color="primary">previous</a>
+  <a routerLink="../{{userId+1}}" mat-raised-button color="primary">next</a>
+}

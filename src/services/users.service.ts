@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Auth } from '../entities/auth';
 import { MessageService } from './message.service';
 import { Router } from '@angular/router';
+import { Group } from '../entities/group';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +73,13 @@ export class UsersService {
     );
   }
 
+  getGroups(): Observable<Group[]> {
+    return this.http.get<Group[]>(this.url + 'groups').pipe(
+      map(jsonGroups => jsonGroups.map(jsonGroup => Group.clone(jsonGroup))),
+      catchError(err => this.processError(err))
+    )
+  }
+
   userConflicts(user: User): Observable<string[]> {
     return this.http.post<string[]>(this.url + 'user-conflicts', user).pipe(
       catchError(err => this.processError(err))
@@ -84,6 +92,15 @@ export class UsersService {
         this.messageService.success("Registration was successful, please log in.");
         this.router.navigateByUrl("/login");
       }),
+      catchError(err => this.processError(err))
+    );
+  }
+
+  saveUser(user: User): Observable<User> {
+    return this.http.post<User>(this.url + 'users/' + this.token, user).pipe(
+      map(jsonUser => User.clone(jsonUser)),
+      tap(user => this.messageService.success("User " + user.name + " saved")),
+      tap(user => this.router.navigateByUrl("/extended-users")),
       catchError(err => this.processError(err))
     );
   }
