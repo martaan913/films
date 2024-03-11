@@ -28,6 +28,7 @@ export class EditUserComponent implements OnInit{
                                Validators.email, 
                       Validators.pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]{2,}$")]),//, this.userConfictsValidator('email')),
     password: new FormControl(''),
+    active: new FormControl(true)
   });
 
   ngOnInit(): void {
@@ -35,7 +36,15 @@ export class EditUserComponent implements OnInit{
       map(params => Number(params.get('id'))),
       tap(id => this.userId = id),
       switchMap(id => id ? this.usersService.getUser(id): of(new User('','')))
-    ).subscribe(user => this.user = user);
+    ).subscribe(user => {
+      this.user = user;
+      this.editForm.patchValue({
+        login: user.name,
+        email: user.email,
+        password: '',
+        active: user.active
+      });
+    });
 
     // this.userId = Number(this.route.snapshot.params['id']);
   }
