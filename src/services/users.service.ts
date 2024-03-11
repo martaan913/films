@@ -65,6 +65,13 @@ export class UsersService {
     );
   }
 
+  getUser(id:number): Observable<User> {
+    return this.http.get<User>(this.url + 'user/' + id + '/' + this.token).pipe(
+      map(jsonUser => User.clone(jsonUser)),
+      catchError(err => this.processError(err))
+    );
+  }
+
   userConflicts(user: User): Observable<string[]> {
     return this.http.post<string[]>(this.url + 'user-conflicts', user).pipe(
       catchError(err => this.processError(err))

@@ -5,14 +5,12 @@ import { MaterialModule } from '../../modules/material.module';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { GroupsToStringPipe } from '../../pipes/groups-to-string.pipe';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfirmService } from '../../services/confirm.service';
 
 @Component({
   selector: 'app-extended-users',
   standalone: true,
-  imports: [MaterialModule, DatePipe, GroupsToStringPipe],
+  imports: [MaterialModule, DatePipe, GroupsToStringPipe, RouterLink],
   templateUrl: './extended-users.component.html',
   styleUrl: './extended-users.component.css'
 })
