@@ -13,6 +13,8 @@ export const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'user/edit/:id', component: EditUserComponent, data: {daco : 1}},
   {path: 'user/new', component: EditUserComponent},
+  {path: 'groups', 
+    loadChildren: () => import('../modules/groups/groups.module')},
   {path: '', redirectTo: '/login', pathMatch: 'full'},
   {path: '**', component: PageNotFoundComponent}
 ];
