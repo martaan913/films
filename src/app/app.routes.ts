@@ -20,6 +20,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     canMatch: [authMatchGuard]
   },
+  {path: 'films', loadComponent: () => import('./films/films.component').then(mod => mod.FilmsComponent)},
   {path: '', redirectTo: '/login', pathMatch: 'full'},
   {path: '**', component: PageNotFoundComponent}
 ];

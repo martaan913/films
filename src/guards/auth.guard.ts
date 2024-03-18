@@ -20,7 +20,7 @@ const auth = (url: string): boolean => {
     return true;
   }
   usersService.redirectAfterLogin = url;
-  // router.navigateByUrl("/login");
+  router.navigateByUrl("/login");
   return false;
 
 }
