@@ -7,6 +7,8 @@ import { MessageService } from './message.service';
 import { Router } from '@angular/router';
 import { Group } from '../entities/group';
 
+export const DEFAULT_REDIRECT_AFTER_LOGIN = "/extended-users"; 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +16,7 @@ export class UsersService {
   private url = "http://localhost:8080/";
   private users: User[] = [new User('Hanka Service', 'hanka@upjs.sk', 2, new Date(), 'qwerty'),
   new User('Julka Service', 'julka@upjs.sk', 3, undefined, 'heslo')];
-
+  public redirectAfterLogin = DEFAULT_REDIRECT_AFTER_LOGIN;
 
   private get token(): string {
     return localStorage.getItem('filmsToken') || '';
@@ -76,6 +78,20 @@ export class UsersService {
   getGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(this.url + 'groups').pipe(
       map(jsonGroups => jsonGroups.map(jsonGroup => Group.clone(jsonGroup))),
+      catchError(err => this.processError(err))
+    )
+  }
+
+  getGroup(id: number): Observable<Group> {
+    return this.http.get<Group>(this.url + 'group/' + id).pipe(
+      map(jsonGroup => Group.clone(jsonGroup)),
+      catchError(err => this.processError(err))
+    )
+  }
+
+  saveGroup(group: Group): Observable<Group> {
+    return this.http.post<Group>(this.url + 'groups/' + this.token, group).pipe(
+      map(jsonGroup => Group.clone(jsonGroup)),
       catchError(err => this.processError(err))
     )
   }
@@ -165,5 +181,9 @@ export class UsersService {
     }
     console.error(err);
     return EMPTY;
+  }
+
+  isLoggedIn():boolean {
+    return !!this.token;
   }
 }

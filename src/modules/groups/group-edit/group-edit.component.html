@@ -1,2 +1,2 @@
-<p>group-edit works!</p>
-<app-group-edit-child></app-group-edit-child>
+<app-group-edit-child [group]="group" [saveToServer]="true" (groupChange)="groupSaved($event)">
+</app-group-edit-child>

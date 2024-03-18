@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { Auth } from '../../entities/auth';
 import { FormsModule } from '@angular/forms';
-import { UsersService } from '../../services/users.service';
+import { UsersService, DEFAULT_REDIRECT_AFTER_LOGIN } from '../../services/users.service';
 import { Router } from '@angular/router';
 import { MaterialModule } from '../../modules/material.module';
 
@@ -22,7 +22,8 @@ export class LoginComponent {
   submit() {
     this.usersService.login(this.auth).subscribe(success => {
       if (success) {
-        this.router.navigateByUrl('/extended-users');
+        this.router.navigateByUrl(this.usersService.redirectAfterLogin);
+        this.usersService.redirectAfterLogin = DEFAULT_REDIRECT_AFTER_LOGIN;
       }
     });
   }

@@ -15,7 +15,7 @@ import { User } from '../../entities/user';
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
-export class RegisterComponent {
+export default class RegisterComponent {
   hide = true;
   passwordMessage = '';
   
