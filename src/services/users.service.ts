@@ -6,6 +6,7 @@ import { Auth } from '../entities/auth';
 import { MessageService } from './message.service';
 import { Router } from '@angular/router';
 import { Group } from '../entities/group';
+import { environment } from '../environments/environment';
 
 export const DEFAULT_REDIRECT_AFTER_LOGIN = "/extended-users"; 
 
@@ -13,12 +14,12 @@ export const DEFAULT_REDIRECT_AFTER_LOGIN = "/extended-users";
   providedIn: 'root'
 })
 export class UsersService {
-  private url = "http://localhost:8080/";
+  private url = environment.serverUrl;
   private users: User[] = [new User('Hanka Service', 'hanka@upjs.sk', 2, new Date(), 'qwerty'),
   new User('Julka Service', 'julka@upjs.sk', 3, undefined, 'heslo')];
   public redirectAfterLogin = DEFAULT_REDIRECT_AFTER_LOGIN;
 
-  private get token(): string {
+  get token(): string {
     return localStorage.getItem('filmsToken') || '';
   }
 
@@ -165,13 +166,13 @@ export class UsersService {
         this.messageService.error("Server not available");
         return EMPTY;
       }
-      if (err.status === 401) {
+      const message = err.error.errorMessage || JSON.parse(err.error).errorMessage;
+      if (err.status === 401 || message === 'unknown token') {
         this.messageService.error("Token was too old, log in again.");
         this.logout();
         return EMPTY;
       }
       if (err.status >= 400 && err.status < 500) {
-        const message = err.error.errorMessage || JSON.parse(err.error).errorMessage;
         this.messageService.error(message);
         return EMPTY;
       }

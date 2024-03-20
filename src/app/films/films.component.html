@@ -1,8 +1,8 @@
 <mat-form-field appearance="outline">
   <mat-label>Filter: </mat-label>
-  <input matInput>
+  <input matInput (input)="onFilter($event)">
 </mat-form-field>
-<table matSort mat-table [dataSource]="films" multiTemplateDataRows>
+<table matSort mat-table [dataSource]="filmsS()">
   <mat-text-column name="id" headerText="ID"></mat-text-column>
   <ng-container matColumnDef="nazov">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Názov</th>
@@ -35,13 +35,13 @@
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let film; columns: columnsToDisplay">
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayS()"></tr>
+  <tr mat-row *matRowDef="let film; columns: columnsToDisplayS()">
   </tr>
 </table>
 
 <mat-paginator 
-              [length]="10"
+              [length]="responseS()?.totalCount || 10"
               [pageSize]="5"
               [pageSizeOptions]="[5, 10, 25, 100]"
               aria-label="Select page">
