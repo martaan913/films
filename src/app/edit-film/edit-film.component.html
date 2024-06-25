@@ -1,0 +1,145 @@
+<h2>
+  @if(filmId) {
+    Editing Film {{film.nazov}} with id {{filmId}}
+  } @else {
+    Insert new film
+  }
+</h2>
+<form [formGroup]="editForm">
+  <mat-form-field appearance="fill">
+    <mat-label>Názov</mat-label>
+    <input matInput formControlName="nazov" required>
+    <mat-error *ngIf="nazov.invalid && (nazov.dirty || nazov.touched)">
+      Názov je povinný.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Rok</mat-label>
+    <input matInput formControlName="rok" required type="number">
+    <mat-error *ngIf="rok.invalid && (rok.dirty || rok.touched)">
+      Rok je povinný.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Slovenský Názov</mat-label>
+    <input matInput formControlName="slovenskyNazov">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>IMDB ID</mat-label>
+    <input matInput formControlName="imdbID" required>
+    <mat-error *ngIf="imdbID.invalid && (imdbID.dirty || imdbID.touched)">
+      IMDB ID je povinný.
+    </mat-error>
+  </mat-form-field>
+  <div formGroupName="poradieVRebricku">
+    <mat-form-field>
+      <mat-label>AFI 1998</mat-label>
+      <input matInput placeholder="AFI 1998 Rank" formControlName="afi1998Control">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>AFI 2007</mat-label>
+      <input matInput placeholder="AFI 2007 Rank" formControlName="afi2007Control">
+    </mat-form-field>
+  </div>
+
+  <div>
+    <h2>Reziser</h2>
+    <mat-form-field>
+      <input type="Person" placeholder="Search Directors" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onDirectorSelected($event)">
+        <mat-option *ngFor="let director of filteredDirectors | async" [value]="director.krstneMeno + ' ' + director.priezvisko">
+          {{ director.krstneMeno }} {{ director.priezvisko }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="onAddDirector()">Pridať režiséra</button>
+  </div>
+  <table mat-table [dataSource]="directorsDataSource">
+    <ng-container matColumnDef="meno">
+      <th mat-header-cell *matHeaderCellDef>Meno rezisera</th>
+      <td mat-cell *matCellDef="let person">{{person.krstneMeno}} {{person.stredneMeno}} {{person.priezvisko}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let director">
+        <button mat-icon-button color="warn" aria-label="delete user" (click)="onDelete(director)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplayDirectors"></tr>
+    <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplayDirectors"></tr>
+  </table>
+
+  <div>
+    <h2>Postavy</h2>
+    <mat-form-field>
+      <mat-label>Herec</mat-label>
+      <input type="text" placeholder="Osoba*" matInput [formControl]="searchControlPostava" [matAutocomplete]="autoPostava" required>
+      <mat-autocomplete #autoPostava="matAutocomplete" (optionSelected)="onCharacterSelected($event)">
+        <mat-option *ngFor="let postava of filteredCharacters | async" [value]="postava.krstneMeno + ' ' + postava.priezvisko">
+          {{postava.krstneMeno}} {{ postava.priezvisko }}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="searchControlPostava.invalid && (searchControlPostava.dirty || searchControlPostava.touched)">
+        Osoba je povinna.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Meno postavy</mat-label>
+      <input placeholder="Meno Postavy*" matInput [formControl]="namePostava" required>
+      <mat-error *ngIf="namePostava.invalid && (namePostava.dirty || namePostava.touched)">
+        Meno postavy je povinne.
+      </mat-error>
+    </mat-form-field >
+
+    <mat-form-field>
+      <mat-label>Rola</mat-label>
+      <mat-select [(value)]="selectedRole" placeholder="Rola" required>
+        <mat-option value="hlavná postava">Hlavná postava</mat-option>
+        <mat-option value="vedľajšia postava">Vedľajšia postava</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="onAddCharacter()">Pridať postavu</button>
+  </div>
+
+
+  <table mat-table [dataSource]="charactersDataSource">
+    <ng-container matColumnDef="herec">
+      <th mat-header-cell *matHeaderCellDef> Meno herca </th>
+      <td mat-cell *matCellDef="let postava">{{postava.herec.krstneMeno}} {{postava.herec.stredneMeno}} {{postava.herec.priezvisko}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="postava">
+      <th mat-header-cell *matHeaderCellDef> Meno postavy </th>
+      <td mat-cell *matCellDef="let postava">{{postava.postava}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="rola">
+      <th mat-header-cell *matHeaderCellDef> Rola </th>
+      <td mat-cell *matCellDef="let postava">{{postava.dolezitost}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let character">
+        <button mat-icon-button color="warn" aria-label="delete user" (click)="onDeleteCharacter(character)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
+  </table>
+
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid" (click)="submit()">Uložiť</button>
+</form>
