@@ -1,9 +1,10 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError } from 'rxjs';
+import {Observable, catchError, map, throwError} from 'rxjs';
 import { Film } from '../entities/film';
 import { UsersService } from './users.service';
 import { environment } from '../environments/environment';
+import {Person} from "../entities/person";
 
 export interface FilmsResponse {
   items: Film[];
@@ -17,11 +18,19 @@ export class FilmsService {
   usersService = inject(UsersService);
   http = inject(HttpClient);
   url = environment.serverUrl;
-  get token() {
-    return this.usersService.token;
+
+  get token(): string {
+    return localStorage.getItem('filmsToken') || '';
   }
 
-  getTokenHeader(): {headers?: {[header: string]: string}, 
+  private set token(value: string) {
+    if (value)
+      localStorage.setItem('filmsToken', value);
+    else
+      localStorage.removeItem('filmsToken');
+  }
+
+  getTokenHeader(): {headers?: {[header: string]: string},
                      params?: HttpParams} | undefined {
     if (!this.token) {
       return undefined;
@@ -54,5 +63,47 @@ export class FilmsService {
     return this.http.get<FilmsResponse>(this.url + 'films', options).pipe(
       catchError(err => this.usersService.processError(err))
     );
+  }
+
+  getFilm(filmId: number): Observable<Film> {
+    const token = this.token;
+
+    const headers = new HttpHeaders({
+      'X-Auth-Token': token
+    });
+
+    return this.http.get<Film>(this.url + 'films/' + filmId, { headers }).pipe(
+      map(jsonFilm => Film.clone(jsonFilm)
+      ),
+      catchError(err => this.usersService.processError(err))
+    );
+  }
+
+  getPerson(searchQuery: string): Observable<Person[]> {
+    const token = this.token; // Získajte token z AuthService alebo odkiaľkoľvek iného miesta, kde je uložený
+
+    // Nastavenie hlavičiek s tokenom
+    const headers = new HttpHeaders({
+      'X-Auth-Token': token
+    });
+
+    // Vykonajte HTTP GET požiadavku na server
+    return this.http.get<Person[]>(this.url + 'search-person/' + searchQuery, { headers }).pipe(
+      catchError(error => {
+        console.error('Chyba pri načítaní režisérov:', error);
+        return throwError('Chyba pri načítaní režisérov. Skúste to prosím znova neskôr.'); // Ošetrenie chyby
+      })
+    );
+  }
+
+  saveFilm(film: Film): Observable<Film> {
+    const token = this.token; // Získajte token z AuthService alebo odkiaľkoľvek iného miesta, kde je uložený
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-Auth-Token': token
+    });
+
+    return this.http.post<Film>(this.url + 'films', film, { headers });
   }
 }

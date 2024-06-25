@@ -7,22 +7,23 @@ import { MaterialModule } from '../../modules/material.module';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { switchMap, tap } from 'rxjs';
+import {RouterLink} from "@angular/router";
 
 @Component({
-  selector: 'app-films',
+  selector: 'app-films-list',
   standalone: true,
-  imports: [MaterialModule],
-  templateUrl: './films.component.html',
-  styleUrl: './films.component.css',
+  imports: [MaterialModule, RouterLink],
+  templateUrl: './films-list.component.html',
+  styleUrl: './films-list.component.css',
 })
-export class FilmsComponent implements AfterViewInit {
+export class FilmsListComponent implements AfterViewInit {
   filmsService = inject(FilmsService);
   usersService = inject(UsersService);
   userNameS = this.usersService.loggedUserSignal;
 
-  columnsToDisplayS = computed(() => this.userNameS() 
-                                   ? ['id', 'nazov', 'rok', 'slovenskyNazov', 'afi1998', 'afi2007']
-                                   : ['id', 'nazov', 'rok']);
+  columnsToDisplayS = computed(() => this.userNameS()
+                                   ? ['id', 'nazov', 'rok', 'slovenskyNazov', 'afi1998', 'afi2007',"actions"]
+                                   : ['id', 'nazov', 'rok', ]);
   paginatorS = viewChild.required<MatPaginator>(MatPaginator);
   sortS = viewChild.required<MatSort>(MatSort);
 
@@ -33,15 +34,15 @@ export class FilmsComponent implements AfterViewInit {
   searchS = signal<string | undefined>(undefined);
 
   queryS = computed(() => new Query(this.orderByS(),this.descendingS(),this.indexFromS(), this.indexToS(), this.searchS()));
-  
+
   request$ = toObservable(this.queryS).pipe(
     tap(query => console.log("request: " , query)),
     switchMap(query => this.filmsService.getFilms(query.orderBy, query.descending, query.indexFrom, query.indexTo, query.search))
   );
-  
+
   responseS = toSignal(this.request$);
   filmsS = computed(() => this.responseS()?.items || []);
-  
+
 
   ngAfterViewInit(): void {
     this.paginatorS().page.subscribe(pageEvent => {
@@ -74,10 +75,10 @@ export class FilmsComponent implements AfterViewInit {
 
 class Query {
   constructor(
-    public orderBy?:string, 
-    public descending?: boolean, 
-    public indexFrom?: number, 
-    public indexTo?: number, 
+    public orderBy?:string,
+    public descending?: boolean,
+    public indexFrom?: number,
+    public indexTo?: number,
     public search?: string
   ){}
 }

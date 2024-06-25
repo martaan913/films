@@ -17,13 +17,13 @@ describe('AppComponent', () => {
   it(`should have the 'films' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('films');
+    expect(app.title).toEqual('films-list');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, films');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, films-list');
   });
 });

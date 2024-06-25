@@ -12,4 +12,17 @@ export class Film {
     public poradieVRebricku: {[name: string]: number},
     public id?: number
   ){}
+
+  static clone(film: Film): Film {
+    return new Film(
+      film.nazov,
+      film.rok,
+      film.slovenskyNazov,
+      film.imdbID,
+      film.reziser,
+      film.postava,
+      film.poradieVRebricku,
+      film.id
+    )
+  }
 }

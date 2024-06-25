@@ -7,7 +7,10 @@
   <button mat-flat-button color="primary" routerLink="/extended-users" routerLinkActive="active"><mat-icon>group</mat-icon>Extended users</button>
   <button mat-flat-button color="primary" routerLink="/groups" routerLinkActive="active"><mat-icon>group</mat-icon>Groups</button>
   <button mat-flat-button color="primary" routerLink="/films" routerLinkActive="active">
-    <mat-icon>video_camera_back</mat-icon>Films</button> 
+    <mat-icon>video_camera_back</mat-icon>Films</button>
+  <span class="spacer"></span>
+  <button mat-flat-button color="primary" routerLink="/chat" routerLinkActive="active">
+    <mat-icon>chat</mat-icon>Chat</button>
   <span class="spacer"></span>
   @if(userNameSignal()) {
     <span>{{userNameSignal()}}</span>
