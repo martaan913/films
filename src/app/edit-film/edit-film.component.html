@@ -5,7 +5,7 @@
     Insert new film
   }
 </h2>
-<form [formGroup]="editForm">
+<form (ngSubmit)="submit()" [formGroup]="editForm">
   <mat-form-field appearance="fill">
     <mat-label>Názov</mat-label>
     <input matInput formControlName="nazov" required>
@@ -46,17 +46,18 @@
   </div>
 
   <div>
-    <h2>Reziser</h2>
+    <h2>Režisér</h2>
     <mat-form-field>
-      <input type="Person" placeholder="Search Directors" matInput [formControl]="searchControl" [matAutocomplete]="auto">
+      <input type="text" placeholder="Search Directors" matInput [formControl]="searchControl" [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onDirectorSelected($event)">
         <mat-option *ngFor="let director of filteredDirectors | async" [value]="director.krstneMeno + ' ' + director.priezvisko">
           {{ director.krstneMeno }} {{ director.priezvisko }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="onAddDirector()">Pridať režiséra</button>
+    <button mat-raised-button color="primary" type="button" (click)="onAddDirector()">Pridať režiséra</button>
   </div>
+
   <table mat-table [dataSource]="directorsDataSource">
     <ng-container matColumnDef="meno">
       <th mat-header-cell *matHeaderCellDef>Meno rezisera</th>
@@ -87,7 +88,7 @@
         </mat-option>
       </mat-autocomplete>
       <mat-error *ngIf="searchControlPostava.invalid && (searchControlPostava.dirty || searchControlPostava.touched)">
-        Osoba je povinna.
+        Osoba je povinná.
       </mat-error>
     </mat-form-field>
 
@@ -95,7 +96,7 @@
       <mat-label>Meno postavy</mat-label>
       <input placeholder="Meno Postavy*" matInput [formControl]="namePostava" required>
       <mat-error *ngIf="namePostava.invalid && (namePostava.dirty || namePostava.touched)">
-        Meno postavy je povinne.
+        Meno postavy je povinné.
       </mat-error>
     </mat-form-field >
 
@@ -107,9 +108,8 @@
       </mat-select>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="onAddCharacter()">Pridať postavu</button>
+    <button mat-raised-button color="primary" type="button" (click)="onAddCharacter()">Pridať postavu</button>
   </div>
-
 
   <table mat-table [dataSource]="charactersDataSource">
     <ng-container matColumnDef="herec">
@@ -140,6 +140,5 @@
     <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
   </table>
 
-
-  <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid" (click)="submit()">Uložiť</button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid">Uložiť</button>
 </form>

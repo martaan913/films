@@ -66,7 +66,7 @@ export class EditFilmComponent implements OnInit {
   columnsToDisplayDirectors = ['meno','actions']
   charactersDataSource = new MatTableDataSource<Postava>()
   directorsDataSource = new MatTableDataSource<Person>()
-  selectedDirector?: Person;
+  selectedDirector: Person | undefined;
   selectedPerson?: Person;
   namePostava = new FormControl()
   selectedRole: any;
@@ -106,7 +106,7 @@ export class EditFilmComponent implements OnInit {
       switchMap(value => this.filmsService.getPerson(value).pipe(
         catchError(err => {
           console.error('Chyba pri načítaní režisérov:', err);
-          return of([]);
+          return of([]); // Return an empty array if there's an error
         })
       ))
     );
@@ -127,20 +127,21 @@ export class EditFilmComponent implements OnInit {
 
   onDirectorSelected(event: any): void {
     const selectedDirectorName = event.option.value;
+    console.log('Selected Director Name:', selectedDirectorName);
+
     this.filteredDirectors.pipe(
-      map(directors => directors.find(director =>
-        `${director.krstneMeno} ${director.priezvisko}` === selectedDirectorName))
-    ).subscribe(director => {
-      this.selectedDirector = director;
+      map(persons => persons.find(person =>
+        `${person.krstneMeno} ${person.priezvisko}` === selectedDirectorName))
+    ).subscribe(person => {
+      this.selectedDirector = person;
     });
-    console.log(event.option.value);
   }
 
   onAddDirector(): void {
-    console.log(this.selectedDirector?.krstneMeno);
     if (this.selectedDirector) {
       this.addDirector(this.selectedDirector);
       this.selectedDirector = undefined;
+      this.searchControl.setValue(''); // Clear the input field
     }
   }
 
@@ -150,6 +151,11 @@ export class EditFilmComponent implements OnInit {
   }
 
   submit() {
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+    this.removeCharacterValidators();
     this.film.nazov = this.nazov.value.trim();
     this.film.rok = Number(this.rok.value);
     this.film.slovenskyNazov = this.slovenskyNazov.value.trim();
@@ -162,6 +168,7 @@ export class EditFilmComponent implements OnInit {
     this.filmsService.saveFilm(this.film).subscribe(
       response => {
         console.log('Film saved successfully:', response);
+
       },
       error => {
         console.error('Error saving film:', error);
@@ -192,11 +199,13 @@ export class EditFilmComponent implements OnInit {
   get imdbID(): FormControl<string> {
     return this.editForm.get('imdbID') as FormControl<string>;
   }
-  get reziser(): FormArray {
-    return this.editForm.get('reziser') as FormArray;
-  }
-
   onAddCharacter() {
+    this.addCharacterValidators();
+    if (this.searchControlPostava.invalid || this.namePostava.invalid) {
+      this.searchControlPostava.markAsTouched();
+      this.namePostava.markAsTouched();
+      return;
+    }
     if (this.selectedPerson) {
       this.addCharacter(this.selectedPerson);
       this.selectedDirector = undefined;
@@ -228,5 +237,17 @@ export class EditFilmComponent implements OnInit {
       this.characters.splice(index, 1);
       this.charactersDataSource.data = [...this.characters]; // Update the dataSource with a new array reference
     }
+  }
+  private addCharacterValidators() {
+    this.searchControlPostava.setValidators([Validators.required]);
+    this.namePostava.setValidators([Validators.required]);
+    this.searchControlPostava.updateValueAndValidity();
+    this.namePostava.updateValueAndValidity();
+  }
+  private removeCharacterValidators() {
+    this.searchControlPostava.clearValidators();
+    this.namePostava.clearValidators();
+    this.searchControlPostava.updateValueAndValidity();
+    this.namePostava.updateValueAndValidity();
   }
 }

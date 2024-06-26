@@ -1,8 +1,8 @@
 [ {
   "id" : 124,
-  "nazov" : "11Test",
+  "nazov" : "11nazovTest",
   "slovenskyNazov" : "13Testikov",
-  "rok" : 2023,
+  "rok" : 2020,
   "imdbID" : "hejhou",
   "reziser" : [ {
     "id" : 2,
@@ -13,7 +13,7 @@
   "postava" : [ ],
   "poradieVRebricku" : {
     "AFI 1998" : 12,
-    "AFI 2007" : 12
+    "AFI 2007" : 13
   }
 }, {
   "id" : 125,
@@ -34421,5 +34421,29 @@
   "poradieVRebricku" : {
     "AFI 2007" : 98,
     "AFI 1998" : 100
+  }
+}, {
+  "id" : 126,
+  "nazov" : "12Nazov",
+  "slovenskyNazov" : "12NayozSK",
+  "rok" : 2020,
+  "imdbID" : "1233214",
+  "reziser" : [ ],
+  "postava" : [ ],
+  "poradieVRebricku" : {
+    "AFI 1998" : null,
+    "AFI 2007" : null
+  }
+}, {
+  "id" : 127,
+  "nazov" : "",
+  "slovenskyNazov" : "",
+  "rok" : 0,
+  "imdbID" : "",
+  "reziser" : [ ],
+  "postava" : [ ],
+  "poradieVRebricku" : {
+    "AFI 1998" : null,
+    "AFI 2007" : null
   }
 } ]

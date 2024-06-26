@@ -1,10 +1,12 @@
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import {Observable, catchError, map, throwError} from 'rxjs';
+import {Observable, catchError, map, throwError, tap} from 'rxjs';
 import { Film } from '../entities/film';
 import { UsersService } from './users.service';
 import { environment } from '../environments/environment';
 import {Person} from "../entities/person";
+import {MessageService} from "./message.service";
+import {Router} from "@angular/router";
 
 export interface FilmsResponse {
   items: Film[];
@@ -15,7 +17,9 @@ export interface FilmsResponse {
   providedIn: 'root'
 })
 export class FilmsService {
+  messageService = inject(MessageService);
   usersService = inject(UsersService);
+  router = inject(Router);
   http = inject(HttpClient);
   url = environment.serverUrl;
 
@@ -104,6 +108,13 @@ export class FilmsService {
       'X-Auth-Token': token
     });
 
-    return this.http.post<Film>(this.url + 'films', film, { headers });
+    return this.http.post<Film>(this.url + 'films/', film, {headers}).pipe(
+      map((jsonFilm) => Film.clone(jsonFilm)),
+      tap((user) =>
+        this.messageService.success('Film ' + film.nazov + ' saved successfully')
+      ),
+      tap((user) => this.router.navigateByUrl('/films')),
+      catchError((err) => this.usersService.processError(err))
+    );
   }
 }
